@@ -15,71 +15,54 @@ members = {
 }
 
 
-def date_diff(first, second):
-    first = first.split('/')
-    second = second.split('/')
-    first = datetime.date(int(first[1]), int(first[2]), int(first[3]))
-    second = datetime.date(int(second[1]), int(second[2]), int(second[3]))
-    diff = first - second
+class GreedyAlg:
+    ItKey = 0;
+    members = {}
 
-    return diff.days
+    def get_sort_price(self):
+        N = len(self.members)
 
+        for i in range(0, N):
+            for j in range(0, N - i - 1):
+                if self.members[j][3] < self.members[j + 1][3]:
+                    self.members[j], self.members[j + 1] = self.members[j + 1], self.members[j]
 
-def get_days_and_money(members):
-    days = [date_diff(members[item][2], members[item][1]) for item in members]
-    money = [members[item][3] for item in members]
-    return days, money
-
-
-def get_sort_price(members):
-    N = len(members)
-    # for i in range(0, N - 1):
-    #     print(members[i])
-    for i in range(0, N):
-        for j in range(0, N - i-1):
-            if members[j][3] < members[j + 1][3]:
-                members[j], members[j + 1] = members[j + 1], members[j]
-
-
-def sort_ar(members):
-    check = True
-    N = len(members)
-    arr = []
-    arrOfDate = []
-    arr.append(members[0])
-    for i in range(0, len(if_in_date(members[0]))):
-        arrOfDate.append((if_in_date(members[0]))[i])
-
-    for i in range(1, N):
-        for j in range(0, len(if_in_date(members[i]))):
-            if (if_in_date(members[i]))[j] in arrOfDate:
-                check = False
-        if check:
-            for k in range(0, len(if_in_date(members[i]))):
-                arrOfDate.append((if_in_date(members[i]))[k])
-            arr.append(members[i])
+    def sort_ar(self):
         check = True
+        N = len(self.members)
+        arr = []
+        arrOfDate = []
+        arr.append(self.members[0])
+        for i in range(0, len(self.if_in_date(self.members[0]))):
+            arrOfDate.append((self.if_in_date(self.members[0]))[i])
 
-    for k in range(0, len(arr)):
-        print(arr[k])
-    # print(arrOfDate)
+        for i in range(1, N):
+            for j in range(0, len(self.if_in_date(self.members[i]))):
+                if (self.if_in_date(self.members[i]))[j] in arrOfDate:
+                    check = False
+            if check:
+                for k in range(0, len(self.if_in_date(self.members[i]))):
+                    arrOfDate.append((self.if_in_date(self.members[i]))[k])
+                arr.append(self.members[i])
+            check = True
+        return arr
 
+    def if_in_date(self, el):
+        temp = [list((pd.date_range(el[1], el[2], freq="D")).date)]
+        return temp[0]
 
-def if_in_date(el):
-    temp = [list((pd.date_range(el[1], el[2], freq="D")).date)]
-    return temp[0]
+    def add_new(self, key, array):
+        self.members[key] = array
 
-def add_new(members, key, array):
-    members[key] = array
+    def edit(self, key, val):
+        for i in range(0, len(self.members)):
+            if i == key:
+                self.members[i][3] = val
+                return
 
-def edit(members, key, val):
-   for i in range(0, len(members)):
-       if i == key:
-           members[i][3] = val
-           return
+    def delete(self, key):
+        self.members.pop(key, None)
 
-def delete(members, key):
-    members.pop(key)
 
 #
 # get_sort_price(members)
@@ -90,6 +73,15 @@ def delete(members, key):
 # print("*********************************")
 # sort_ar(members)
 
-print(type(members))
+new = GreedyAlg()
 
-print(members)
+for i in range(len(members)):
+    new.add_new(i, members[i])
+
+
+
+new.get_sort_price()
+
+print(new.members)
+print("***************************")
+print(new.sort_ar())
