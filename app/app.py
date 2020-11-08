@@ -62,7 +62,6 @@ class GreedyAlg:
     def edit(self, key, val):
         upd = {key: (self.members[key][0], self.members[key][1], self.members[key][2], val)}
         for i in range(0, len(self.members)):
-            print(self.members[i][3])
             if i == int(key):
                 self.members.update(upd)
                 return
@@ -161,8 +160,11 @@ def del_el(del_el_key):
 @eel.expose
 def greedy():
     new.get_sort_price()
-    new.sort_ar()
-    return new.print()
+    result = ""
+    arr = new.sort_ar()
+    for i in range(len(arr)):
+        result += str(arr[i]) + "\n"
+    return result
 
 @eel.expose
 def encoding():
