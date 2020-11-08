@@ -55,40 +55,27 @@ class GreedyAlg:
         temp = [list((pd.date_range(el[1], el[2], freq="D")).date)]
         return temp[0]
 
-    def add_new(self, key, array):
-        self.members[key] = array
+    def add_new(self, array):
+        self.members[self.ItKey] = array
+        self.ItKey += 1
 
     def edit(self, key, val):
+        upd = {key: (self.members[key][0], self.members[key][1], self.members[key][2], val)}
         for i in range(0, len(self.members)):
-            if i == key:
-                self.members[i][3] = val
+            print(self.members[i][3])
+            if i == int(key):
+                self.members.update(upd)
                 return
 
     def delete(self, key):
-        self.members.pop(key, None)
+        self.members.pop(key)
 
+    def print(self):
+        arr = ""
+        for key, value in self.members.items():
+            arr += (str(key) + ' is key of' + str(value) + '\n')
+        return arr
 
-#
-# get_sort_price(members)
-# for k in range(0, len(members)):
-#     print(members[k])
-#
-#
-# print("*********************************")
-# sort_ar(members)
-
-# new = GreedyAlg()
-#
-# for i in range(len(members)):
-#     new.add_new(i, members[i])
-#
-#
-#
-# new.get_sort_price()
-#
-# print(new.members)
-# print("***************************")
-# print(new.sort_ar())
 
 class Node(namedtuple("Node", ["left", "right"])):
     def walk(self, code, acc):
@@ -114,7 +101,6 @@ class Haffman:
                     break
         return "".join(sx)
 
-
     def huffman_encode(self, s):
         h = []
         for ch, freq in Counter(s).items():
@@ -134,19 +120,61 @@ class Haffman:
         return code
 
 
-# def main():
-#     s = input()
-#     el = Haffman()
-#     code = el.huffman_encode(s)
-#     encoded = "".join(code[ch] for ch in s)
-#
-#     print(len(code), len(encoded))
-#     for ch in sorted(code):
-#         print("{}: {}".format(ch, code[ch]))
-#     print(encoded)
-#     print(el.huffman_decode(encoded, code))
-#
-# if __name__ == "__main__":
-#     main()
+
+new = GreedyAlg()
+for i in range(len(members)):
+    new.add_new(members[i])
+
+text = open("1.txt")
+data = text.read()
+newHaff = Haffman()
+
+
+@eel.expose
+def print_members():
+    return new.print()
+
+
+@eel.expose
+def haff_text():
+    return data
+
+
+@eel.expose
+def add_el(name, start, end, money):
+    new.add_new((str(name), str(start), str(end), money))
+    return new.print()
+
+
+@eel.expose
+def change_el(key, val):
+    new.edit(int(key), int(val))
+    return new.print()
+
+
+@eel.expose
+def del_el(del_el_key):
+    new.delete(int(del_el_key))
+    return new.print()
+
+
+@eel.expose
+def greedy():
+    new.get_sort_price()
+    new.sort_ar()
+    return new.print()
+
+@eel.expose
+def encoding():
+    code = newHaff.huffman_encode(data)
+    encoded = "".join(code[ch] for ch in data)
+    return encoded
+
+@eel.expose
+def decoding():
+    code = newHaff.huffman_encode(data)
+    encoded = "".join(code[ch] for ch in data)
+    return newHaff.huffman_decode(encoded, code)
+
 eel.init("web")
 eel.start("index.html", size=(1000, 900))
